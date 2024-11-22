@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HACKED</title>
+</head>
+
+<body>
+
+    <!-- Audio Element -->
+    <audio id="popupSound">
+        <source src="sounds/popup-sound.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        function spawnPopups() {
+            const message = "You’ve been hacked!";
+            const popupCount = 20; // Number of popups
+            const screenWidth = window.screen.width;
+            const screenHeight = window.screen.height;
+
+            // Get audio element
+            const sound = document.getElementById('popupSound');
+
+            for (let i = 0; i < popupCount; i++) {
+                // Play sound
+                try {
+                    sound.currentTime = 0; // Reset sound
+                    sound.play();
+                } catch (error) {
+                    console.error("Audio playback failed:", error);
+                }
+
+                // Generate random positions
+                const randomLeft = Math.floor(Math.random() * (screenWidth - 300));
+                const randomTop = Math.floor(Math.random() * (screenHeight - 200));
+
+                // Open popup
+                const newWindow = window.open('', '_blank', `width=300,height=200,left=${randomLeft},top=${randomTop}`);
+                if (newWindow) {
+                    newWindow.document.write(`
+                        <html>
+                            <head>
+                                <title>Warning!</title>
+                            </head>
+                            <body style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: black; color: red; font-size: 20px; text-align: center;">
+                                <h1>${message}</h1>
+                            </body>
+                        </html>
+                    `);
+                    newWindow.document.close();
+                }
+            }
+        }
+
+        // Automatically trigger popups after page loads
+        window.onload = function () {
+            // Optionally delay the popups for a better effect
+            setTimeout(spawnPopups, 2000); // 2-second delay
+        };
+    </script>
+</body>
+
+</html>

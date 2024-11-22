@@ -4,63 +4,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACKED</title>
+    <title>Multiple Popup Simulation</title>
+    <style>
+        /* Basic styling for the page */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            text-align: center;
+            overflow: hidden;
+            /* Prevent scrollbars due to popups */
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        /* Style for each individual popup (modal) */
+        .popup {
+            position: absolute;
+            /* Make popups positionable */
+            width: 300px;
+            height: 50px;
+            background-color: rgb(0, 0, 0);
+            color: red;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            display: none;
+            /* Hidden by default */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            font-size: 18px;
+            z-index: 1000;
+            /* Ensure popups are above other content */
+        }
+
+        .popup h2 {
+            margin-top: 0;
+            color: red;
+        }
+
+        .popup .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .popup .close:hover,
+        .popup .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+    </style>
 </head>
 
 <body>
 
-    <!-- Audio Element -->
-    <audio id="popupSound">
-        <source src="sounds/popup-sound.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-
     <script>
         function spawnPopups() {
-            const message = "You’ve been hacked!";
             const popupCount = 20; // Number of popups
-            const screenWidth = window.screen.width;
-            const screenHeight = window.screen.height;
+            const message = "You’ve been hacked!"; // Message in each popup
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
 
-            // Get audio element
-            const sound = document.getElementById('popupSound');
+            // Play a sound (optional)
+            const sound = new Audio("sounds/popup-sound.mp3"); // Replace with the correct path
+            sound.play();
 
             for (let i = 0; i < popupCount; i++) {
-                // Play sound
-                try {
-                    sound.currentTime = 0; // Reset sound
-                    sound.play();
-                } catch (error) {
-                    console.error("Audio playback failed:", error);
-                }
+                // Create a new popup (modal)
+                const popup = document.createElement('div');
+                popup.classList.add('popup');
 
-                // Generate random positions
-                const randomLeft = Math.floor(Math.random() * (screenWidth - 300));
-                const randomTop = Math.floor(Math.random() * (screenHeight - 200));
+                // Set random position on the screen
+                const randomLeft = Math.floor(Math.random() * (screenWidth - 300)); // Ensure popup doesn't overflow
+                const randomTop = Math.floor(Math.random() * (screenHeight - 150)); // Ensure popup doesn't overflow
+                popup.style.left = `${randomLeft}px`;
+                popup.style.top = `${randomTop}px`;
 
-                // Open popup
-                const newWindow = window.open('', '_blank', `width=300,height=200,left=${randomLeft},top=${randomTop}`);
-                if (newWindow) {
-                    newWindow.document.write(`
-                        <html>
-                            <head>
-                                <title>Warning!</title>
-                            </head>
-                            <body style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: black; color: red; font-size: 20px; text-align: center;">
-                                <h1>${message}</h1>
-                            </body>
-                        </html>
-                    `);
-                    newWindow.document.close();
-                }
+                // Set the content of the popup
+                popup.innerHTML = `
+                    <span class="close" onclick="closePopup(this)">&times;</span>
+                    <h2>${message}</h2>
+                `;
+
+                // Append the popup to the body
+                document.body.appendChild(popup);
+
+                // Show the popup with a delay
+                setTimeout(() => {
+                    popup.style.display = 'block'; // Make the popup visible
+                }, i * 100); // Delay each popup by 100ms
             }
         }
 
-        // Automatically trigger popups after page loads
+        // Function to close the popup
+        function closePopup(closeButton) {
+            const popup = closeButton.parentElement;
+            popup.style.display = 'none'; // Hide the popup
+        }
+
+        // Automatically show popups after the page loads
         window.onload = function () {
-            // Optionally delay the popups for a better effect
-            setTimeout(spawnPopups, 2000); // 2-second delay
+            spawnPopups(); // Start popups immediately after loading the page
         };
+
     </script>
 </body>
 
